@@ -5,10 +5,17 @@
   height: auto;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  counter-reset: slides;
 }
 .hover_slider-window {
   position: absolute;
   inset: 0;
+
+  &:focus-visible {
+    outline-style: auto !important;
+    outline-width: unset !important;
+    outline-color: unset !important;
+  }
 }
 .hover_slider img {
   position: absolute;
@@ -43,6 +50,7 @@
   position: relative;
   height: 1px;
   width: 100%;
+  counter-increment: slides;
 }
 .hover_slider .indmark.active {
   background: rgba(0,0,0,.35);
@@ -58,23 +66,48 @@
 }
 .hover_slider[data-ind="dots"] {
   margin-bottom: 20px;
+
+  .hover_slider-indicator {
+    bottom: -16px;
+  }
+  .indmark {
+    height: unset;
+    width: 5px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin: 4px;
+    background: rgba(0,0,0,.1);
+    flex-shrink: 0;
+  }
+  .indmark.active {
+    background: rgba(0,0,0,.5);
+  }
 }
-.hover_slider[data-ind="dots"] .hover_slider-indicator {
-  bottom: -16px;
-}
-.hover_slider[data-ind="dots"] .indmark {
-  height: unset;
-  width: 5px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  margin: 4px;
-  background: rgba(0,0,0,.1);
-  flex-shrink: 0;
-}
-.hover_slider[data-ind="dots"] .indmark.active {
-  background: rgba(0,0,0,.5);
+.hover_slider[data-ind="nums"] {
+  margin-bottom: 20px;
+
+  .hover_slider-indicator {
+    bottom: -16px;
+    font-size: 12px;
+    height: 1em;
+  }
+  .indmark {
+    width: min-content;
+    background: none;
+    white-space: nowrap;
+    height: 1em;
+    line-height: 1;
+  }
+  .indmark.active::before {
+    content: counter(slides);
+  }
+  .indmark:last-child::after {
+    content: "\2009/\2009" counter(slides);
+  }
 }
 
-.hover_slider.hover_slider-touch_active .hover_slider-window {
-  /* outline-color: #43a7ff; */
-}
+
+/* uncomment to highlight the outline when activated by touch */
+/* .hover_slider.hover_slider-touch_active .hover_slider-window {
+  outline-color: #43a7ff;
+} */
