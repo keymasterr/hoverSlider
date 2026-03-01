@@ -22,6 +22,7 @@ Move your cursor (or swipe on mobile) across the slider to navigate between imag
 - **Configurable indicators** — line (default), dots, numbers, or none
 - **Flexible sizing** — auto-detects dimensions from the image, or respects CSS-defined width/height
 - **`@2x` / `@3x` retina support** — infers pixel density from filename
+- **Ready state** — `hover_slider-ready` class added when all images are decoded; optional `data-wait` delays interaction until then
 - **Zero dependencies** — pure HTML, CSS, and JS
 
 
@@ -93,6 +94,7 @@ An individual element can still override any param via its own `data-*` attribut
 | `data-border` | `border` | `none` | *(outline shown)* | Set to `none` to hide the container outline |
 | `data-touch-loop` | `touchLoop` | `true` \| `false` | `false` | Loop when swiping past first/last slide |
 | `data-touch-relative` | `touchRelative` | `true` \| `false` | `false` | Make touch navigation relative to swipe start position |
+| `data-wait` | `wait` | `true` \| `false` | `false` | Delay interaction until all images are decoded |
 
 ### Examples
 
@@ -145,7 +147,7 @@ Works in all modern browsers. Requires:
 
 ## Notes
 
-- **Instant transitions** — slides switch without animation by design, for a direct flipbook-style feel
+- **`hover_slider-cover_ready` class** — a CSS hook available once the first image is decoded, similar to the existing commented note in the CSS
 - **Idempotency** — calling `hoverSlider()` on an already-initialized element is safe and does nothing
 - **(to himself)**: Only use slideshows if the hidden images don’t matter to the story.
 

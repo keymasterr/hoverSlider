@@ -46,6 +46,9 @@
   display: flex;
   justify-content: center;
 }
+.hover_slider[data-wait="true"]:not(.hover_slider-ready) .hover_slider-indicator {
+  visibility: hidden;
+}
 .hover_slider .indmark {
   position: relative;
   height: 1px;
@@ -71,7 +74,6 @@
     bottom: -16px;
   }
   .indmark {
-    height: unset;
     width: 5px;
     height: 5px;
     border-radius: 50%;
@@ -110,4 +112,15 @@
 /* uncomment to highlight the outline when activated by touch */
 /* .hover_slider.hover_slider-touch_active .hover_slider-window {
   outline-color: #43a7ff;
+} */
+
+/* uncomment to fade the cover image in when ready */
+/* .hover_slider:not(.hover_slider-cover_ready, :has(img.active)) img:first-child {
+  transform: translateY(4px);
+  opacity: 0 !important;
+}
+.hover_slider.hover_slider-cover_ready:not(:has(img.active)) img:first-child {
+  transform: translateY(0);
+  opacity: 1;
+  transition: all .5s;
 } */

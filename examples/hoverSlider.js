@@ -35,6 +35,17 @@ function hoverSlider(target = '.hover_slider', options = {}) {
       ? cont.dataset.touchRelative === 'true'
       : options.touchRelative ?? false;
 
+    const wait = 'wait' in cont.dataset
+      ? cont.dataset.wait === 'true'
+      : options.wait ?? false;
+
+    if (!('wait' in cont.dataset)) {
+      cont.dataset.wait = wait;
+      appliedAttrs.push('wait');
+    }
+
+    let ready = !wait;
+
     const imgWindow = document.createElement('div');
     imgWindow.className = 'hover_slider-window';
     imgWindow.append(...imgs);
@@ -73,7 +84,14 @@ function hoverSlider(target = '.hover_slider', options = {}) {
         cont.style.width = `${naturalWidth / scale}px`;
         cont.style.height = `${naturalHeight / scale}px`;
       }
+
+      cont.classList.add('hover_slider-cover_ready');
     }).catch((errorMessage) => console.error("Image loading error:", errorMessage));
+
+    Promise.all([...imgs].map(img => img.decode())).then(() => {
+      cont.classList.add('hover_slider-ready');
+      ready = true;
+    }).catch(err => console.error("Image loading error:", err));
 
     let tsX, tsY, hasMovedOnce = false, allowSlide = true, curActiveId = 0, touchStartId;
 
@@ -110,7 +128,7 @@ function hoverSlider(target = '.hover_slider', options = {}) {
     }
 
     function nextStep(e) {
-      if (allowSlide !== true) return;
+      if (allowSlide !== true || !ready) return;
 
       e.preventDefault();
       const curX = e.touches ? e.touches[0].clientX : e.clientX;
@@ -167,6 +185,7 @@ function hoverSlider(target = '.hover_slider', options = {}) {
       indicator.remove();
       imgWindow.remove();
       appliedAttrs.forEach(attr => delete cont.dataset[attr]);
+      cont.classList.remove('hover_slider-cover_ready', 'hover_slider-ready');
       delete cont._hoverSliderDestroy;
       return cont;
     };
