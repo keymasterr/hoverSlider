@@ -73,7 +73,7 @@
   .indmark {
     height: unset;
     width: 5px;
-    aspect-ratio: 1;
+    height: 5px;
     border-radius: 50%;
     margin: 4px;
     background: rgba(0,0,0,.1);
