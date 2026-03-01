@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta charset="UTF-8" />
   <title>hoverSlider.js</title>
 
@@ -14,7 +15,7 @@
       display: flex;
       flex-direction: column;
       min-height: 100svh;
-      margin: 0;
+      margin: 0 2em;
       background: var(--bg);
       justify-content: center;
       align-items: center;
@@ -24,9 +25,7 @@
       line-height: 1;
       margin-bottom: -0.25em;
     }
-    .hover_slider {
-      flex-shrink: 0;
-    }
+
     .radiogroup {
       display: inline-flex;
       --bdrs: 4px;
@@ -34,6 +33,7 @@
       background: color-mix(in oklch, currentColor 9%, transparent);
       border: 1px solid transparent;
       gap: 1px;
+      margin: 0.125em 1px;
 
       input[type="radio"] {
         display: none;
@@ -65,12 +65,7 @@
   </p>
   <p>Lightweight vanilla JS slider: move your cursor or finger across to flip through images</p>
 
-  <div
-    class="hover_slider"
-    data-ind="dots"
-    data-touch-relative="true"
-    data-touch-loop="true"
-  >
+  <div class="hover_slider" style="flex-shrink: 0; max-width: 100%;">
     <img src="example-1@2x.png" />
     <img src="example-2.png" />
     <img src="example-3.png" />
@@ -85,48 +80,7 @@
     <img src="example-12.png" />
   </div>
 
-  <p>
-    <code>
-      data-ind=<span class="radiogroup" id="param-ind">
-        <input type="radio" name="param-ind" id="param-ind-dots" checked />
-        <label for="param-ind-dots">"dots"</label>
-        <input type="radio" name="param-ind" id="param-ind-nums" />
-        <label for="param-ind-nums">"nums"</label>
-        <input type="radio" name="param-ind" id="param-ind-none" />
-        <label for="param-ind-none">"none"</label>
-        <input type="radio" name="param-ind" id="param-ind-line" />
-        <label for="param-ind-line">  —  </label>
-      </span>
-      <br />
-      data-border=<span class="radiogroup" id="param-border">
-        <input type="radio" name="param-border" id="param-border-none" />
-        <label for="param-border-none">"none"</label>
-        <input type="radio" name="param-border" id="param-border-outline" checked />
-        <label for="param-border-outline">  —  </label>
-      </span>
-      <br />
-      data-fit=<span class="radiogroup" id="param-fit">
-        <input type="radio" name="param-fit" id="param-fit-contain" checked />
-        <label for="param-fit-contain">  —  </label>
-        <input type="radio" name="param-fit" id="param-fit-cover" />
-        <label for="param-fit-cover">"cover"</label>
-      </span>
-      <br />
-      data-touch-relative=<span class="radiogroup" id="param-touch-relative">
-        <input type="radio" name="param-touch-relative" id="param-touch-relative-true" checked />
-        <label for="param-touch-relative-true">"true"</label>
-        <input type="radio" name="param-touch-relative" id="param-touch-relative-false" />
-        <label for="param-touch-relative-false">  —  </label>
-      </span>
-      <br />
-      data-touch-loop=<span class="radiogroup" id="param-touch-loop">
-        <input type="radio" name="param-touch-loop" id="param-touch-loop-true" checked />
-        <label for="param-touch-loop-true">"true"</label>
-        <input type="radio" name="param-touch-loop" id="param-touch-loop-false" />
-        <label for="param-touch-loop-false">  —  </label>
-      </span>
-    </code>
-  </p>
+  <p><code id="params"></code></p>
 
   <script>
     const slider = document.querySelector(".hover_slider");
@@ -136,53 +90,74 @@
       hoverSlider(slider);
     }
 
+    const params = [
+      { label: "data-ind",
+        dataset: "ind",
+        options: ["dots", "nums", "none", ""],
+        checked: "dots"
+      },
+      { label: "data-border",
+        dataset: "border",
+        options: ["none", ""],
+        checked: ""
+      },
+      { label: "data-fit",
+        dataset: "fit",
+        options: ["cover", ""],
+        checked: ""
+      },
+      { label: "data-touch-relative",
+        dataset: "touchRelative",
+        options: ["true", ""],
+        checked: "",
+        reinit: true
+      },
+      { label: "data-touch-loop",
+        dataset: "touchLoop",
+        options: ["true", ""],
+        checked: "",
+        reinit: true
+      },
+    ];
+
+    const paramsEl = document.querySelector('#params');
+
+    function applyParam(param, value) {
+      slider.dataset[param.dataset] = value;
+      if (param.reinit && slider._hoverSliderDestroy) reinit();
+    }
+
+    params.forEach(param => {
+      const groupId = `param-${param.dataset}`;
+      const line = document.createElement('div');
+
+      const groupEl = document.createElement('span');
+      groupEl.className = 'radiogroup';
+      groupEl.id = groupId;
+
+      param.options.forEach((value) => {
+        const id = `${groupId}-${value || 'default'}`;
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = groupId;
+        input.id = id;
+        if (value === param.checked) input.checked = true;
+
+        const labelEl = document.createElement('label');
+        labelEl.htmlFor = id;
+        labelEl.textContent = value === "" ? '\u00a0\u00a0—\u00a0\u00a0' : `"${value}"`;
+
+        input.addEventListener('click', () => applyParam(param, value));
+        groupEl.append(input, labelEl);
+      });
+
+      line.append(`${param.label}=`, groupEl);
+      paramsEl.append(line);
+
+      slider.dataset[param.dataset] = param.checked;
+    });
+
     hoverSlider(slider);
-
-    const indMap = {
-      "param-ind-dots": "dots",
-      "param-ind-nums": "nums",
-      "param-ind-none": "none",
-      "param-ind-line": "",
-    };
-    document.querySelectorAll("#param-ind input").forEach((el) =>
-      el.addEventListener("click", () => {
-        slider.dataset.ind = indMap[el.id];
-      })
-    );
-
-    const borderMap = {
-      "param-border-none": "none",
-      "param-border-outline": "",
-    };
-    document.querySelectorAll("#param-border input").forEach((el) =>
-      el.addEventListener("click", () => {
-        slider.dataset.border = borderMap[el.id];
-      })
-    );
-
-    const fitMap = {
-      "param-fit-contain": "",
-      "param-fit-cover": "cover",
-    };
-    document.querySelectorAll("#param-fit input").forEach((el) =>
-      el.addEventListener("click", () => {
-        slider.dataset.fit = fitMap[el.id];
-      })
-    );
-
-    document.querySelectorAll("#param-touch-relative input").forEach((el) =>
-      el.addEventListener("click", () => {
-        slider.dataset.touchRelative = el.id === "param-touch-relative-true";
-        reinit();
-      })
-    );
-
-    document.querySelectorAll("#param-touch-loop input").forEach((el) =>
-      el.addEventListener("click", () => {
-        slider.dataset.touchLoop = el.id === "param-touch-loop-true";
-        reinit();
-      })
-    );
   </script>
 </body>
 </html>
