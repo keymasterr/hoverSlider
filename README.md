@@ -21,6 +21,7 @@ Move your cursor (or swipe on mobile) across the slider to navigate between imag
 - **Keyboard navigation** — arrow keys when focused
 - **Configurable indicators** — line (default), dots, numbers, or none
 - **Flexible sizing** — auto-detects dimensions from the image, or respects CSS-defined width/height
+- **Flicker-free switching** — the outgoing image is held underneath until the incoming one has painted
 - **`@2x` / `@3x` retina support** — infers pixel density from filename
 - **Ready state** — `hover_slider-ready` class added when all images are decoded; optional `data-wait` delays interaction until then
 - **Zero dependencies** — pure HTML, CSS, and JS
@@ -64,7 +65,15 @@ hoverSlider(nodeList);                // NodeList or array
 
 ### Destroy
 
-Each initialized slider gets a `_hoverSliderDestroy()` method that tears down the instance, restores the original DOM, and returns the element:
+`hoverSlider()` returns an array of handles, one per initialized element:
+
+```js
+const [slider] = hoverSlider('.my-gallery');
+slider.el;        // the container element
+slider.destroy(); // tear down, restore the original DOM, return the element
+```
+
+The same teardown is also exposed on the element itself as `_hoverSliderDestroy()`:
 
 ```js
 const slider = document.querySelector('.hover_slider');
@@ -73,6 +82,8 @@ slider._hoverSliderDestroy();
 // Re-initialize later
 hoverSlider(slider);
 ```
+
+Teardown removes only what hoverSlider added — a `hover_slider` class, `data-*` attribute, or `aria-hidden` that was already on your markup is left alone.
 
 
 ## Configuration
@@ -95,6 +106,8 @@ An individual element can still override any param via its own `data-*` attribut
 | `data-touch-loop` | `touchLoop` | `true` \| `false` | `false` | Loop when swiping past first/last slide |
 | `data-touch-relative` | `touchRelative` | `true` \| `false` | `false` | Make touch navigation relative to swipe start position |
 | `data-wait` | `wait` | `true` \| `false` | `false` | Delay interaction until all images are decoded |
+
+Boolean attributes follow the HTML convention: a bare `data-touch-loop` counts as `true`, same as `data-touch-loop="true"`. Any other value is `false`.
 
 ### Examples
 
@@ -119,7 +132,9 @@ hoverSlider determines the container size using the following priority:
 
 1. **Both width and height set in CSS** — used as-is
 2. **Only one dimension set in CSS** — the other is inferred from the first image's aspect ratio
-3. **Neither set** — width and height are read from the first image's natural dimensions, scaled down for `@2x` / `@3x` images
+3. **Neither set** — width is read from the first image's natural width (scaled down for `@2x` / `@3x` images) and paired with `aspect-ratio` and `max-width: 100%`, so the slider shrinks to fit a narrow viewport instead of overflowing it
+
+Sizing is measured from an empty clone of the container inserted next to the original, so ancestor rules, percentage widths and inherited sizing resolve exactly as they do for the real element.
 
 Only the first image determines the container size. All subsequent images are fitted within it using `object-fit`.
 
@@ -139,16 +154,20 @@ Name your files with `@2x` or `@3x` suffixes and hoverSlider will halve or third
 Works in all modern browsers. Requires:
 
 - CSS `:has()` selector
+- CSS Nesting
 - `TouchEvent` API
 - `Image.decode()` method
+- `Promise.allSettled()`
 
-**Minimum versions:** Chrome/Edge 105+, Firefox 121+, Safari 15.4+
+**Minimum versions:** Chrome/Edge 112+, Firefox 121+, Safari 16.5+
 
 
 ## Notes
 
 - **`hover_slider-cover_ready` class** — a CSS hook available once the first image is decoded, similar to the existing commented note in the CSS
 - **Idempotency** — calling `hoverSlider()` on an already-initialized element is safe and does nothing
+- **Failed images** — a broken image no longer blocks the slider: the rest still work, `hover_slider-ready` is still reached, and the failure is reported via `console.warn`
+- **Accessibility** — the container is focusable with arrow-key navigation; the indicator and every image after the first are `aria-hidden`, so screen readers announce only the cover image's `alt`
 - **(to himself)**: Only use slideshows if the hidden images don’t matter to the story.
 
 

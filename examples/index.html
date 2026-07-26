@@ -1,163 +1,166 @@
 <!DOCTYPE html>
 <html lang="en-US">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8" />
-  <title>hoverSlider.js</title>
+    <script src="/gtag.js"></script>
 
-  <link rel="stylesheet" href="hoverSlider.css" />
-  <script src="hoverSlider.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <title>hoverSlider.js</title>
 
-  <style type="text/css">
-    body {
-      --bg: #fff;
+    <link rel="stylesheet" href="hoverSlider.css" />
+    <script src="hoverSlider.js"></script>
 
-      display: flex;
-      flex-direction: column;
-      min-height: 100svh;
-      margin: 0 2em;
-      background: var(--bg);
-      justify-content: center;
-      align-items: center;
-      text-decoration-skip-ink: none;
-    }
-    h1 {
-      line-height: 1;
-      margin-bottom: -0.25em;
-    }
+    <style type="text/css">
+        body {
+            --bg: #fff;
 
-    .radiogroup {
-      display: inline-flex;
-      --bdrs: 4px;
-      border-radius: calc(var(--bdrs) + 1px);
-      background: color-mix(in oklch, currentColor 9%, transparent);
-      border: 1px solid transparent;
-      gap: 1px;
-      margin: 0.125em 1px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100svh;
+            margin: 0 2em;
+            background: var(--bg);
+            justify-content: center;
+            align-items: center;
+            text-decoration-skip-ink: none;
+        }
+        h1 {
+            line-height: 1;
+            margin-bottom: -0.25em;
+        }
 
-      input[type="radio"] {
-        display: none;
-      }
-      input[type="radio"] + label {
-        white-space: nowrap;
-        display: inline-block;
-        padding: 0 0.1em;
-        border-radius: var(--bdrs);
-        opacity: 0.75;
-        user-select: none;
-        cursor: pointer;
-      }
-      input[type="radio"]:checked + label {
-        background: var(--bg);
-        opacity: 1;
-        cursor: default;
-        user-select: auto;
-      }
-    }
+        .radiogroup {
+            display: inline-flex;
+            --bdrs: 4px;
+            border-radius: calc(var(--bdrs) + 1px);
+            background: color-mix(in oklch, currentColor 9%, transparent);
+            border: 1px solid transparent;
+            gap: 1px;
+            margin: 0.125em 1px;
 
-  </style>
+            input[type="radio"] {
+                display: none;
+            }
+            input[type="radio"] + label {
+                white-space: nowrap;
+                display: inline-block;
+                padding: 0 0.1em;
+                border-radius: var(--bdrs);
+                opacity: 0.75;
+                user-select: none;
+                cursor: pointer;
+            }
+            input[type="radio"]:checked + label {
+                background: var(--bg);
+                opacity: 1;
+                cursor: default;
+                user-select: auto;
+            }
+        }
+
+    </style>
 </head>
 <body>
-  <h1>hoverSlider</h1>
-  <p>
-    <a href="https://github.com/keymasterr/hoverSlider">GitHub</a> ·
-    <a href="joke.html">pure CSS desktop-only version</a>
-  </p>
-  <p>Lightweight vanilla JS slider: move your cursor or finger across to flip through images</p>
+    <h1>hoverSlider</h1>
+    <p>
+        <a href="https://github.com/keymasterr/hoverSlider">GitHub</a> ·
+        <a href="joke.html">pure CSS desktop-only version</a>
+    </p>
+    <p>Lightweight vanilla JS slider: move your cursor or finger across to flip through images</p>
 
-  <div class="hover_slider" style="flex-shrink: 0; max-width: 100%;">
-    <img src="example-1@2x.png" />
-    <img src="example-2.png" />
-    <img src="example-3.png" />
-    <img src="example-4.png" />
-    <img src="example-5.png" />
-    <img src="example-6.png" />
-    <img src="example-7.png" />
-    <img src="example-8.png" />
-    <img src="example-9.png" />
-    <img src="example-10.png" />
-    <img src="example-11.png" />
-    <img src="example-12.png" />
-  </div>
+    <div class="hover_slider" style="flex-shrink: 0; max-width: 100%;">
+        <img src="example-1@2x.png" />
+        <img src="example-2.png" />
+        <img src="example-3.png" />
+        <img src="example-4.png" />
+        <img src="example-5.png" />
+        <img src="example-6.png" />
+        <img src="example-7.png" />
+        <img src="example-8.png" />
+        <img src="example-9.png" />
+        <img src="example-10.png" />
+        <img src="example-11.png" />
+        <img src="example-12.png" />
+    </div>
 
-  <p><code id="params"></code></p>
+    <p><code id="params"></code></p>
 
-  <script>
-    const slider = document.querySelector(".hover_slider");
+    <script>
+        const slider = document.querySelector(".hover_slider");
 
-    function reinit() {
-      slider._hoverSliderDestroy();
-      hoverSlider(slider);
-    }
+        function reinit() {
+            slider._hoverSliderDestroy();
+            hoverSlider(slider);
+        }
 
-    const params = [
-      { label: "data-ind",
-        dataset: "ind",
-        options: ["dots", "nums", "none", ""],
-        checked: "dots"
-      },
-      { label: "data-border",
-        dataset: "border",
-        options: ["none", ""],
-        checked: ""
-      },
-      { label: "data-fit",
-        dataset: "fit",
-        options: ["cover", ""],
-        checked: ""
-      },
-      { label: "data-touch-relative",
-        dataset: "touchRelative",
-        options: ["true", ""],
-        checked: "",
-        reinit: true
-      },
-      { label: "data-touch-loop",
-        dataset: "touchLoop",
-        options: ["true", ""],
-        checked: "",
-        reinit: true
-      },
-    ];
+        const params = [
+            { label: "data-ind",
+                dataset: "ind",
+                options: ["dots", "nums", "none", ""],
+                checked: "dots"
+            },
+            { label: "data-border",
+                dataset: "border",
+                options: ["none", ""],
+                checked: ""
+            },
+            { label: "data-fit",
+                dataset: "fit",
+                options: ["cover", ""],
+                checked: ""
+            },
+            { label: "data-touch-relative",
+                dataset: "touchRelative",
+                options: ["true", ""],
+                checked: "",
+                reinit: true
+            },
+            { label: "data-touch-loop",
+                dataset: "touchLoop",
+                options: ["true", ""],
+                checked: "",
+                reinit: true
+            },
+        ];
 
-    const paramsEl = document.querySelector('#params');
+        const paramsEl = document.querySelector('#params');
 
-    function applyParam(param, value) {
-      slider.dataset[param.dataset] = value;
-      if (param.reinit && slider._hoverSliderDestroy) reinit();
-    }
+        function applyParam(param, value) {
+            if (value === "") delete slider.dataset[param.dataset];
+            else slider.dataset[param.dataset] = value;
+            if (param.reinit && slider._hoverSliderDestroy) reinit();
+        }
 
-    params.forEach(param => {
-      const groupId = `param-${param.dataset}`;
-      const line = document.createElement('div');
+        params.forEach(param => {
+            const groupId = `param-${param.dataset}`;
+            const line = document.createElement('div');
 
-      const groupEl = document.createElement('span');
-      groupEl.className = 'radiogroup';
-      groupEl.id = groupId;
+            const groupEl = document.createElement('span');
+            groupEl.className = 'radiogroup';
+            groupEl.id = groupId;
 
-      param.options.forEach((value) => {
-        const id = `${groupId}-${value || 'default'}`;
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = groupId;
-        input.id = id;
-        if (value === param.checked) input.checked = true;
+            param.options.forEach((value) => {
+                const id = `${groupId}-${value || 'default'}`;
+                const input = document.createElement('input');
+                input.type = 'radio';
+                input.name = groupId;
+                input.id = id;
+                if (value === param.checked) input.checked = true;
 
-        const labelEl = document.createElement('label');
-        labelEl.htmlFor = id;
-        labelEl.textContent = value === "" ? '\u00a0\u00a0—\u00a0\u00a0' : `"${value}"`;
+                const labelEl = document.createElement('label');
+                labelEl.htmlFor = id;
+                labelEl.textContent = value === "" ? '\u00a0\u00a0—\u00a0\u00a0' : `"${value}"`;
 
-        input.addEventListener('click', () => applyParam(param, value));
-        groupEl.append(input, labelEl);
-      });
+                input.addEventListener('click', () => applyParam(param, value));
+                groupEl.append(input, labelEl);
+            });
 
-      line.append(`${param.label}=`, groupEl);
-      paramsEl.append(line);
+            line.append(`${param.label}=`, groupEl);
+            paramsEl.append(line);
 
-      slider.dataset[param.dataset] = param.checked;
-    });
+            applyParam(param, param.checked);
+        });
 
-    hoverSlider(slider);
-  </script>
+        hoverSlider(slider);
+    </script>
 </body>
 </html>
