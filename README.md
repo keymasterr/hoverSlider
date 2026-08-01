@@ -21,7 +21,6 @@ Move your cursor (or swipe on mobile) across the slider to navigate between imag
 - **Keyboard navigation** — arrow keys when focused
 - **Configurable indicators** — line (default), dots, numbers, or none
 - **Flexible sizing** — auto-detects dimensions from the image, or respects CSS-defined width/height
-- **Flicker-free switching** — the outgoing image is held underneath until the incoming one has painted
 - **`@2x` / `@3x` retina support** — infers pixel density from filename
 - **Ready state** — `hover_slider-ready` class added when all images are decoded; optional `data-wait` delays interaction until then
 - **Zero dependencies** — pure HTML, CSS, and JS

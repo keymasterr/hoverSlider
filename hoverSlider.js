@@ -191,23 +191,6 @@ function hoverSlider(target = '.hover_slider', options = {}) {
       cont.classList.remove('hover_slider-touch_active');
     });
 
-    let holdImg = null, holdSeq = 0;
-
-    function holdUnder(prevImg, nextImg) {
-      if (holdImg && holdImg !== prevImg) holdImg.classList.remove('prevActive');
-      holdImg = prevImg;
-      prevImg.classList.add('prevActive');
-
-      const seq = ++holdSeq;
-      nextImg.decode().catch(() => {}).then(() => {
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          if (destroyed || seq !== holdSeq) return;
-          prevImg.classList.remove('prevActive');
-          holdImg = null;
-        }));
-      });
-    }
-
     function setActive(nextActiveId, loop = false) {
       if (!Number.isFinite(nextActiveId)) return;
       if (!loop && (nextActiveId < 0 || nextActiveId >= n)) return;
@@ -219,7 +202,6 @@ function hoverSlider(target = '.hover_slider', options = {}) {
 
       nextImg.classList.add('active');
       prevImg.classList.remove('active');
-      holdUnder(prevImg, nextImg);
 
       indmarks[curActiveId].classList.remove('active');
       indmarks[nextActiveId].classList.add('active');
@@ -232,7 +214,7 @@ function hoverSlider(target = '.hover_slider', options = {}) {
       destroyed = true;
 
       imgs.forEach(img => {
-        img.classList.remove('active', 'prevActive');
+        img.classList.remove('active');
         cont.append(img);
       });
       appliedAria.forEach(img => img.removeAttribute('aria-hidden'));

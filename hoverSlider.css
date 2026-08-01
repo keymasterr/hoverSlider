@@ -35,10 +35,6 @@
   opacity: 1;
   z-index: 1;
 }
-.hover_slider img.prevActive {
-  opacity: 1;
-  z-index: 0;
-}
 .hover_slider-indicator {
   position: absolute;
   width: 100%;
