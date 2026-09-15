@@ -28,12 +28,40 @@ Move your cursor (or swipe on mobile) across the slider to navigate between imag
 
 ## Installation
 
-Just include the two files in your project:
+### npm
+
+```sh
+npm install hoverslider
+```
+
+```js
+import hoverSlider from 'hoverslider';
+import 'hoverslider/hoverSlider.css';
+
+hoverSlider();
+```
+
+TypeScript types are included.
+
+### CDN
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hoverslider@1/hoverSlider.css">
+<script src="https://cdn.jsdelivr.net/npm/hoverslider@1/hoverSlider.js"></script>
+```
+
+For minified files, use `hoverSlider.min.js` / `hoverSlider.min.css` — jsDelivr minifies them on the fly.
+
+### Plain files
+
+Or just copy the two files into your project:
 
 ```html
 <link rel="stylesheet" href="hoverSlider.css">
 <script src="hoverSlider.js"></script>
 ```
+
+The script defines a global `hoverSlider()` function.
 
 
 ## Usage
@@ -83,6 +111,33 @@ hoverSlider(slider);
 ```
 
 Teardown removes only what hoverSlider added — a `hover_slider` class, `data-*` attribute, or `aria-hidden` that was already on your markup is left alone.
+
+### React, Vue and other frameworks
+
+hoverSlider moves the `<img>` elements into a wrapper it creates, so the framework must not re-render them while the slider is active. Initialize after mount, destroy on unmount, and re-initialize if the image list changes:
+
+```jsx
+import { useEffect, useRef } from 'react';
+import hoverSlider from 'hoverslider';
+import 'hoverslider/hoverSlider.css';
+
+function Gallery({ images }) {
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const [slider] = hoverSlider(ref.current);
+    return () => slider?.destroy();
+  }, [images]);
+
+  return (
+    <div className="hover_slider" ref={ref} key={images.join()}>
+      {images.map(src => <img key={src} src={src} />)}
+    </div>
+  );
+}
+```
+
+The `key` on the container makes React replace the whole element when the images change, instead of patching children that hoverSlider has moved.
 
 
 ## Configuration

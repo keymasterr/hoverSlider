@@ -1,0 +1,52 @@
+{
+  "name": "hoverslider",
+  "version": "1.0.0",
+  "description": "Lightweight, zero-dependency image slider that flips through slides as you hover or swipe across it",
+  "keywords": [
+    "slider",
+    "image-slider",
+    "hover",
+    "swipe",
+    "touch",
+    "gallery",
+    "flipbook",
+    "carousel",
+    "vanilla-js",
+    "zero-dependency"
+  ],
+  "homepage": "https://keymasterr.com/micro/hover-slider/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/keymasterr/hoverSlider.git"
+  },
+  "bugs": "https://github.com/keymasterr/hoverSlider/issues",
+  "license": "MIT",
+  "author": "Roman Kliuchkovych",
+  "exports": {
+    ".": {
+      "types": "./hoverSlider.d.mts",
+      "default": "./dist/hoverSlider.mjs"
+    },
+    "./hoverSlider.css": "./hoverSlider.css",
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/hoverSlider.mjs",
+  "module": "./dist/hoverSlider.mjs",
+  "types": "./hoverSlider.d.mts",
+  "style": "./hoverSlider.css",
+  "unpkg": "./hoverSlider.js",
+  "jsdelivr": "./hoverSlider.js",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "hoverSlider.js",
+    "hoverSlider.css",
+    "hoverSlider.d.mts",
+    "dist/"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "npm run build"
+  }
+}
