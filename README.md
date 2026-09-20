@@ -112,6 +112,27 @@ hoverSlider(slider);
 
 Teardown removes only what hoverSlider added — a `hover_slider` class, `data-*` attribute, or `aria-hidden` that was already on your markup is left alone.
 
+### Active slide
+
+The handle also reads and sets the current slide:
+
+```js
+const [slider] = hoverSlider('.my-gallery');
+
+slider.active;       // index of the slide currently shown
+slider.setActive(2); // show the third slide
+```
+
+`setActive()` ignores out-of-range indexes and does nothing after `destroy()`. Together they let you re-initialize without losing the visitor's position:
+
+```js
+const active = slider.active;
+slider.destroy();
+
+const [next] = hoverSlider(el);
+next.setActive(active);
+```
+
 ### React, Vue and other frameworks
 
 hoverSlider moves the `<img>` elements into a wrapper it creates, so the framework must not re-render them while the slider is active. Initialize after mount, destroy on unmount, and re-initialize if the image list changes:

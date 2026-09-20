@@ -13,6 +13,7 @@
     <style type="text/css">
         body {
             --bg: #fff;
+            --bdrs: 4px;
 
             display: flex;
             flex-direction: column;
@@ -28,9 +29,38 @@
             margin-bottom: -0.25em;
         }
 
+        .npm {
+            --gap: .5em;
+
+            display: inline-flex;
+            align-items: baseline;
+            gap: var(--gap);
+            border-radius: calc(var(--bdrs) + 1px);
+            background: color-mix(in oklch, currentColor 9%, transparent);
+            border: 1px solid transparent;
+            padding-left: var(--gap);
+
+            .copy {
+                align-self: center;
+                font: inherit;
+                height: 1em;
+                width: calc(1em + 2 * var(--gap));
+                padding: 0;
+                border: none;
+                border-radius: var(--bdrs);
+                background: no-repeat center / 16px url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22none%22%3E%3Cpath%20stroke%3D%22%23000%22%20d%3D%22M5.5%203a.5.5%200%200%201%20.5-.5h5.5c.5523%200%201%20.4477%201%201V10a.5.5%200%200%201-.5.5%22%20opacity%3D%22.4%22%2F%3E%3Cpath%20stroke%3D%22%23000%22%20d%3D%22M3.5%205.5c0-.5523.4477-1%201-1h5c.5523%200%201%20.4477%201%201v6c0%20.5523-.4477%201-1%201h-5c-.5523%200-1-.4477-1-1z%22%2F%3E%3C%2Fsvg%3E");
+                background-color: var(--bg);
+                cursor: pointer;
+    
+                &[data-copied] {
+                    background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20fill%3D%22none%22%20stroke%3D%22%23063%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22m4%208%203.5%203.5L14%205%22%2F%3E%3C%2Fsvg%3E");
+                    cursor: default;
+                }
+            }
+        }
+
         .radiogroup {
             display: inline-flex;
-            --bdrs: 4px;
             border-radius: calc(var(--bdrs) + 1px);
             background: color-mix(in oklch, currentColor 9%, transparent);
             border: 1px solid transparent;
@@ -45,7 +75,7 @@
                 display: inline-block;
                 padding: 0 0.1em;
                 border-radius: var(--bdrs);
-                opacity: 0.75;
+                opacity: .75;
                 user-select: none;
                 cursor: pointer;
             }
@@ -61,9 +91,17 @@
 </head>
 <body>
     <h1>hoverSlider</h1>
-    <p>
+    <p style="text-align: center;">
         <a href="https://github.com/keymasterr/hoverSlider">GitHub</a> ·
         <a href="joke.html">pure CSS desktop-only version</a>
+        
+        <br>
+
+        <a href="https://www.npmjs.com/package/hoverslider">npm</a>: 
+        <span class="npm">
+            <code>npm i hoverslider</code>
+            <button type="button" class="copy" aria-label="Copy install command"></button>
+        </span>
     </p>
     <p>Lightweight vanilla JS slider: move your cursor or finger across to flip through images</p>
 
@@ -84,40 +122,67 @@
 
     <p><code id="params"></code></p>
 
+    <p>Full options, sizing rules and the JS API are in the <a href="https://github.com/keymasterr/hoverSlider#configuration">README</a>.</p>
+
+    <script>
+        const copyBtn = document.querySelector(".copy");
+        const copyCmd = document.querySelector(".npm code");
+        let copiedTimer;
+
+        copyBtn.addEventListener("click", async () => {
+            const text = copyCmd.textContent.trim();
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch {
+                // clipboard API needs a secure context; fall back to a scratch textarea
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                document.body.append(ta);
+                ta.select();
+                document.execCommand("copy");
+                ta.remove();
+            }
+            copyBtn.dataset.copied = "";
+            clearTimeout(copiedTimer);
+            copiedTimer = setTimeout(() => {
+                delete copyBtn.dataset.copied;
+            }, 1500);
+        });
+    </script>
+
     <script>
         const slider = document.querySelector(".hover_slider");
+        let handle;
 
         function reinit() {
+            const active = handle?.active ?? 0;
             slider._hoverSliderDestroy();
-            hoverSlider(slider);
+            [handle] = hoverSlider(slider);
+            handle.setActive(active);
         }
 
+        // `null` means the attribute is absent.
         const params = [
             { label: "data-ind",
                 dataset: "ind",
-                options: ["dots", "nums", "none", ""],
+                options: ["dots", "nums", "none", null],
                 checked: "dots"
             },
             { label: "data-border",
                 dataset: "border",
-                options: ["none", ""],
-                checked: ""
-            },
-            { label: "data-fit",
-                dataset: "fit",
-                options: ["cover", ""],
-                checked: ""
+                options: ["none", null],
+                checked: null
             },
             { label: "data-touch-relative",
                 dataset: "touchRelative",
-                options: ["true", ""],
-                checked: "",
+                options: ["true", "false"],
+                checked: "false",
                 reinit: true
             },
             { label: "data-touch-loop",
                 dataset: "touchLoop",
-                options: ["true", ""],
-                checked: "",
+                options: ["true", "false"],
+                checked: "false",
                 reinit: true
             },
         ];
@@ -125,7 +190,7 @@
         const paramsEl = document.querySelector('#params');
 
         function applyParam(param, value) {
-            if (value === "") delete slider.dataset[param.dataset];
+            if (value === null) delete slider.dataset[param.dataset];
             else slider.dataset[param.dataset] = value;
             if (param.reinit && slider._hoverSliderDestroy) reinit();
         }
@@ -138,8 +203,8 @@
             groupEl.className = 'radiogroup';
             groupEl.id = groupId;
 
-            param.options.forEach((value) => {
-                const id = `${groupId}-${value || 'default'}`;
+            param.options.forEach((value, i) => {
+                const id = `${groupId}-${i}`;
                 const input = document.createElement('input');
                 input.type = 'radio';
                 input.name = groupId;
@@ -148,7 +213,7 @@
 
                 const labelEl = document.createElement('label');
                 labelEl.htmlFor = id;
-                labelEl.textContent = value === "" ? '\u00a0\u00a0—\u00a0\u00a0' : `"${value}"`;
+                labelEl.textContent = value === null ? '\u00a0\u00a0—\u00a0\u00a0' : `"${value}"`;
 
                 input.addEventListener('click', () => applyParam(param, value));
                 groupEl.append(input, labelEl);
@@ -160,7 +225,7 @@
             applyParam(param, param.checked);
         });
 
-        hoverSlider(slider);
+        [handle] = hoverSlider(slider);
     </script>
 </body>
 </html>

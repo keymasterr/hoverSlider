@@ -22,6 +22,10 @@ export interface HoverSliderOptions {
 export interface HoverSliderInstance {
   /** The container element. */
   el: HTMLElement;
+  /** Index of the slide currently shown. */
+  readonly active: number;
+  /** Show the slide at `index`. Out-of-range indexes and calls after `destroy()` are ignored. */
+  setActive(index: number): void;
   /** Tear down, restore the original DOM, and return the element. */
   destroy(): HTMLElement;
 }

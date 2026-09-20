@@ -143,6 +143,7 @@ function hoverSlider(target = '.hover_slider', options = {}) {
 
     imgWindow.setAttribute('tabindex', '0');
     imgWindow.addEventListener('keydown', (e) => {
+      if (!ready) return;
       if (e.key === 'ArrowRight') setActive(curActiveId + 1);
       if (e.key === 'ArrowLeft') setActive(curActiveId - 1);
     });
@@ -229,7 +230,12 @@ function hoverSlider(target = '.hover_slider', options = {}) {
     }
 
     cont._hoverSliderDestroy = destroy;
-    instances.push({el: cont, destroy});
+    instances.push({
+      el: cont,
+      get active() { return curActiveId; },
+      setActive: i => { if (!destroyed) setActive(i); },
+      destroy,
+    });
   });
 
   return instances;
