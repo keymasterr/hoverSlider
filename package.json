@@ -1,6 +1,6 @@
 {
   "name": "hoverslider",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Lightweight, zero-dependency image slider that flips through slides as you hover or swipe across it",
   "keywords": [
     "slider",
